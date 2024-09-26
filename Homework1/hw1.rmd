@@ -1,0 +1,64 @@
+---
+title: "Homework 1"
+author: "Matthew Præstgaard"
+date: "due 09/26/2024"
+output:
+  rmdformats::downcute:
+    self_contained: true
+    default_style: "dark"
+    downcute_theme: "default"
+    code_folding: "show"
+  svglite:
+    fig.retina: 2
+---
+
+### Projects on https://github.com/matthewep528/Intro-to-R
+
+# Housekeeping
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+require(knitr)
+require(rmdformats)
+knitr::opts_chunk$set(error = TRUE)
+```
+
+```{r, message=FALSE}
+library(tidyverse)
+```
+
+# Task 2: Creating Different Object Types
+## Creating numeric vector "my_numbers"
+
+```{r}
+my_numbers <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+```
+
+## Creating vector of my five favorate colors
+
+```{r}
+my_colors <- c("green", "blue", "red", "purple", "orange")
+```
+
+## Creating data frame of name, age, and grade
+
+```{r}
+name <- c("Guiseppe", "MargaretThatcher", "Theodore")
+age <- c(22, 87, 19)
+grade <- c("sophomore", "senior", "junior")
+
+student_info <- data.frame(name, age, grade)
+```
+
+# (Task 3: Scripting and Documentation)
+
+# Task 4: Basic Functions
+
+```{r}
+# creating function calculate_average using argument "vector" as input
+calculate_average <- function(vector) {
+    mean(vector)
+}
+
+# testing function with "my_numbers"
+calculate_average(my_numbers)
+```
