@@ -12,7 +12,9 @@ output:
     fig.retina: 2
 ---
 
-### Projects on https://github.com/matthewep528/Intro-to-R
+### All code and projects available on https://github.com/matthewep528/Intro-to-R
+
+# This document contains the code for homework 1. The first code chunks include loading required packages, creating vectors of numerical and character types, and combining those vectors into a data frame. Then a function is written which takes a numeric vector as its input and outputs the mean of the numbers.
 
 # Housekeeping
 
@@ -62,3 +64,6 @@ calculate_average <- function(vector) {
 # testing function with "my_numbers"
 calculate_average(my_numbers)
 ```
+
+# Task 5: Good Programming Practices
+### I would like to think I have good commenting and legibility practices thanks to the lintr package automatically correcting things as I go

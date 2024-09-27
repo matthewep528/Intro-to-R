@@ -1,3 +1,8 @@
+########################################
+# Matthew Praestgaard
+# 26 September 2024
+# R script containing code for homework 1. Packages are loaded and installed first, then vectors are created and put into a data frame
+
 # loading required packages for rmd output
 require(knitr)
 require(rmdformats)
