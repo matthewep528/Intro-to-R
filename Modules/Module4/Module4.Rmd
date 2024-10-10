@@ -1,5 +1,5 @@
 ---
-title: "Module 1"
+title: "Module 4"
 output:
   rmdformats::downcute:
     self_contained: true
@@ -16,14 +16,15 @@ knitr::opts_chunk$set(error = TRUE)
 ```
 
 ```{r, message = FALSE}
-
-library(tidyverse)
-library(devtools)
-
+pacman::p_load(
+  knitr,
+  codebook,
+  tidyverse,
+  here,
+  expss
+)
 ```
 
 ```{r}
-
-
 
 ```
