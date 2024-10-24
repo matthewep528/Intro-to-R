@@ -1,0 +1,190 @@
+---
+title: "Homework 2"
+author: "Matthew Præstgaard"
+date: "due 10/24/2024"
+output:
+  rmdformats::downcute:
+    self_contained: true
+    default_style: "dark"
+    downcute_theme: "default"
+    code_folding: "show"
+  svglite:
+    fig.retina: 2
+---
+
+### All code and projects available on https://github.com/matthewep528/Intro-to-R
+
+# Housekeeping
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+require(knitr)
+require(rmdformats)
+knitr::opts_chunk$set(error = TRUE)
+```
+
+```{r, message=FALSE}
+library(tidyverse)
+library(rio)
+library(expss)
+require(plotly)
+source(here::here("Homework2", "csvImport.r")) # sourcing script for importing sleep data
+```
+
+# Part I: Data Import
+
+```{r}
+# script was already sourced, but is also included here in a code chunk
+# script to import CSV data set
+require(tidyverse)
+require(rio)
+require(here)
+
+diet <- rio::import(here("Homework2", "diet_data-2.csv"))
+
+# inspecting data
+dim(diet)
+head(diet)
+names(diet)
+str(diet)
+
+# creating data set with only adults GE 20 years old
+dietAdult <- diet %>%
+  filter(age >= 20)
+```
+
+# Part II
+## Create a new age categorical variable using ten-year intervals, starting at aged 20
+
+```{r}
+dietAdult <- dietAdult %>%
+  dplyr::mutate(age_category = case_when(
+    age >= 20 & age < 30 ~ "20-29",
+    age >= 30 & age < 40 ~ "30-39",
+    age >= 40 & age < 50 ~ "40-49",
+    age >= 50 & age < 60 ~ "50-59",
+    age >= 60 & age < 70 ~ "60-69",
+    age >= 70 & age < 80 ~ "70-79",
+    age >= 80 & age < 90 ~ "80-89",
+    age >= 90 ~ "90-99"
+  ))
+```
+
+## Create a new binary variable to indicate good or bad dietary quality: good dietary quality with healthy eating index (HEI) > 80, bad dietary quality with HEI < 80
+
+```{r}
+# using if_else statement to create good and bad categories for diet quality
+dietAdult <- dietAdult %>%
+  mutate(
+    dietQuality = if_else(hei > 80, "Good", "Bad")
+  )
+```
+
+## Create two new physical activity categorical variables:Met Physical Activity Recommendations (MVPA >150 min/week) or Did Not Meet Physical Activity Recommendations (<150 min/week).Sufficient Physical Activity (MVPA >150 min/week), Insufficient Physical Activity (0< MVPA <150 min/week), and No Reported Physical activity (0 min/week)
+
+```{r}
+dietAdult <- dietAdult %>%
+  mutate(
+    metPhysAct = if_else(mvpa > 150, "Yes", "No"),
+    sufficientPhysAct = case_when(
+      mvpa > 150 ~ "Sufficient",
+      mvpa > 0 & mvpa <= 150 ~ "Insufficient",
+      mvpa == 0 ~ "NotReported"
+    )
+  )
+```
+
+```{r, warning = FALSE}
+# making some fun plots using some of these newly created variables
+source(here("Functions", "ggHist.r"))
+
+ggHist(dietAdult, age, group = dietAdult$metPhysAct, title = "Histograms of Age Grouped by Meeting Physical Activity", x_lab = "Age") %>% ggplotly()
+```
+
+```{r,message=FALSE,warning=FALSE}
+# commented-out code for function contained in ggHist.r
+# ggplot histogram function with optional faceting variable
+# Usage: gg.hist(data, x, bins (optional), title (optional), data$group (optional))
+# ggHist <- function(data, x, bins = 20, title = "Insert Title", x_lab = "x", group = NULL) {
+#  require(ggplot2)
+#  require(ggh4x)
+
+#  gg <- ggplot(data, aes(x = {{ x }})) +
+#    geom_histogram(
+#      aes(
+#        y = after_stat(density)
+#      ),
+#      bins = bins,
+#      alpha = 0.8,
+#      color = "#353535"
+#    ) +
+#    stat_theodensity(
+#      col = "#ecd467",
+#      size = 0.9,
+#      linetype = "dashed"
+#    ) +
+#    labs(
+#      title = title,
+#      x = x_lab,
+#      y = "Frequency"
+#    )
+
+#  if (!is.null(group)) {
+#    gg <- gg + aes(fill = {{ group }}) +
+#      facet_wrap({{ group }})
+#  }
+
+#  return(gg)
+# }
+```
+
+## Create dummy variables for each race group
+
+```{r}
+dietAdult <- dietAdult %>%
+  mutate(
+    dRace = (race - 1)
+  )
+```
+
+## Label both variables and values, use Diet_Data_Codebook. Please also check whether the labels are created correctly.
+
+```{r}
+# Applying variable labels
+dietAdultLab <- apply_labels(dietAdult,
+  age = "Age, yrs",
+  edu = "Education level",
+  work = "Employment status",
+  poverty = "Poverty status",
+  mvpa = "Physical activity, min/wk",
+  sleep_duration = "Sleep duration, hrs/night",
+  eat_window = "Food intake window, hrs",
+  eat_window_10hr = "10 hr food intake window",
+  hei = "Healthy eating index",
+  gender = "Gender",
+  bmi = "Body Mass Index",
+  race = "Race/ethnicity",
+  age_category = "Age Category (10-yr intervals)",
+  dietQuality = "Dietary Quality",
+  metPhysAct = "Met Physical Activity Recommendations",
+  sufficientPhysAct = "Sufficient Physical Activity",
+  dRace = "Dummy Variable for Race"
+)
+
+# Checking if the labels are applied
+sapply(dietAdultLab, var_lab)
+
+# Applying Value Labels
+dietAdultLab <- apply_labels(dietAdultLab,
+  edu = c("< high school" = 1, "high school/GED" = 2, "> high school" = 3),
+  work = c("not working" = 0, "part-time" = 1, "full-time" = 2),
+  poverty = c("low income" = 0, "middle income" = 1, "high income" = 2),
+  gender = c("Men" = 1, "Women" = 2),
+  race = c("non-Hispanic White" = 1, "non-Hispanic Black" = 2, "Hispanic" = 3, "Other (includes multiracial)" = 4),
+  metPhysAct = c("Yes" = 1, "No" = 0),
+  sufficientPhysAct = c("Sufficient" = 1, "Insufficient" = 2, "NotReported" = 0),
+  dietQuality = c("Good" = 1, "Bad" = 0)
+)
+
+# Checking if the labels are applied again
+sapply(dietAdultLab, var_lab)
+```
