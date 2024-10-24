@@ -1,0 +1,29 @@
+---
+title: "Module 1"
+output:
+  rmdformats::downcute:
+    self_contained: true
+    default_style: "dark"
+    downcute_theme: "default"
+    code_folding: "show"
+  svglite:
+    fig.retina: 2
+---
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+require(knitr)
+knitr::opts_chunk$set(error = TRUE)
+```
+
+```{r, message = FALSE}
+
+library(tidyverse)
+library(devtools)
+
+```
+
+```{r}
+
+
+
+```

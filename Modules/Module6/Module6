@@ -1,0 +1,30 @@
+---
+title: "Module 6"
+output:
+  rmdformats::downcute:
+    self_contained: true
+    default_style: "dark"
+    downcute_theme: "default"
+    code_folding: "show"
+  svglite:
+    fig.retina: 2
+---
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+require(knitr)
+knitr::opts_chunk$set(error = TRUE)
+```
+
+```{r, message = FALSE}
+pacman::p_load(
+    knitr,
+    codebook,
+    tidyverse,
+    here,
+    expss
+)
+```
+
+```{r}
+
+```
