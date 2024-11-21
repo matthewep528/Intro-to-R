@@ -22,11 +22,42 @@ require(rmdformats)
 knitr::opts_chunk$set(error = TRUE)
 ```
 
+```{r}
+# Function to check and install missing packages
+checkPackages <- function(packages) {
+  for (pkg in packages) {
+    if (!requireNamespace(pkg, quietly = TRUE)) {
+      install.packages(pkg)
+    }
+  }
+}
+
+# making vector of required packages
+requiredPackages <- c("tidyverse", "rio", "expss", "plotly", "ggh4x", "devtools")
+
+# running function and applying
+checkPackages(requiredPackages)
+
+lapply(requiredPackages, library, character.only = TRUE)
+
+# Check if 'ggthemr' is installed
+if (!requireNamespace("ggthemr", quietly = TRUE)) {
+  message("Package 'ggthemr' not found. Installing from GitHub...")
+
+  # Install 'ggthemr' from GitHub
+  devtools::install_github("Mikata-Project/ggthemr")
+}
+
+# Load 'ggthemr'
+library(ggthemr)
+```
+
 ```{r, message=FALSE}
-library(tidyverse)
-library(rio)
-library(expss)
-require(plotly)
+# require(tidyverse)
+# require(rio)
+# require(expss)
+# require(plotly)
+# require(ggh4x)
 source(here::here("Homework2", "csvImport.r")) # sourcing script for importing sleep data
 ```
 
@@ -93,48 +124,44 @@ dietAdult <- dietAdult %>%
   )
 ```
 
-```{r, warning = FALSE}
-# making some fun plots using some of these newly created variables
-source(here("Functions", "ggHist.r"))
+```{r,message=FALSE,warning=FALSE}
+# ggplot histogram function with optional faceting variable
+# Usage:gg.hist(data, x, bins(optional), title(optional), data$group(optional))
+ggHist <- function(data, x, bins = 20, title = "Insert Title", x_lab = "x", group = NULL) {
+  require(ggplot2)
+  require(ggh4x)
 
-ggHist(dietAdult, age, group = dietAdult$metPhysAct, title = "Histograms of Age Grouped by Meeting Physical Activity", x_lab = "Age") %>% ggplotly()
+  gg <- ggplot(data, aes(x = {{ x }})) +
+    geom_histogram(
+      aes(
+        y = after_stat(density)
+      ),
+      bins = bins,
+      alpha = 0.8,
+    ) +
+    stat_theodensity(
+      col = "#ecd467",
+      size = 0.9,
+      linetype = "dashed"
+    ) +
+    labs(
+      title = title,
+      x = x_lab,
+      y = "Frequency"
+    )
+
+  if (!is.null(group)) {
+    gg <- gg + aes(fill = {{ group }}) +
+      facet_wrap({{ group }})
+  }
+
+  return(gg)
+}
 ```
 
-```{r,message=FALSE,warning=FALSE}
-# commented-out code for function contained in ggHist.r
-# ggplot histogram function with optional faceting variable
-# Usage: gg.hist(data, x, bins (optional), title (optional), data$group (optional))
-# ggHist <- function(data, x, bins = 20, title = "Insert Title", x_lab = "x", group = NULL) {
-#  require(ggplot2)
-#  require(ggh4x)
-
-#  gg <- ggplot(data, aes(x = {{ x }})) +
-#    geom_histogram(
-#      aes(
-#        y = after_stat(density)
-#      ),
-#      bins = bins,
-#      alpha = 0.8,
-#      color = "#353535"
-#    ) +
-#    stat_theodensity(
-#      col = "#ecd467",
-#      size = 0.9,
-#      linetype = "dashed"
-#    ) +
-#    labs(
-#      title = title,
-#      x = x_lab,
-#      y = "Frequency"
-#    )
-
-#  if (!is.null(group)) {
-#    gg <- gg + aes(fill = {{ group }}) +
-#      facet_wrap({{ group }})
-#  }
-
-#  return(gg)
-# }
+```{r, warning = FALSE}
+# making some fun plots using some of these newly created variables
+ggHist(dietAdult, age, group = dietAdult$metPhysAct, title = "Histograms of Age Grouped by Meeting Physical Activity", x_lab = "Age") %>% ggplotly()
 ```
 
 ## Create dummy variables for each race group

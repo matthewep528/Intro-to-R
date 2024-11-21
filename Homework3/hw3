@@ -1,0 +1,60 @@
+---
+title: "Homework 3"
+author: "Matthew Præstgaard"
+date: "due 11/21/2024"
+output:
+  rmdformats::downcute:
+    self_contained: true
+    default_style: "dark"
+    downcute_theme: "default"
+    code_folding: "show"
+  svglite:
+    fig.retina: 2
+---
+
+### All code and projects available on https://github.com/matthewep528/Intro-to-R
+
+# Housekeeping
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+require(knitr)
+require(rmdformats)
+knitr::opts_chunk$set(error = TRUE)
+```
+
+```{r}
+# Function to check and install missing packages
+checkPackages <- function(packages) {
+    for (pkg in packages) {
+        if (!requireNamespace(pkg, quietly = TRUE)) {
+            install.packages(pkg)
+        }
+    }
+}
+
+# making vector of required packages
+requiredPackages <- c("tidyverse", "rio", "expss", "plotly", "ggh4x", "devtools")
+
+# running function and applying
+checkPackages(requiredPackages)
+
+lapply(requiredPackages, library, character.only = TRUE)
+
+# Check if 'ggthemr' is installed
+if (!requireNamespace("ggthemr", quietly = TRUE)) {
+    message("Package 'ggthemr' not found. Installing from GitHub...")
+
+    # Install 'ggthemr' from GitHub
+    devtools::install_github("Mikata-Project/ggthemr")
+}
+
+# Load 'ggthemr'
+library(ggthemr)
+```
+
+# Part 1
+## 1.1: Import Data
+
+```{r, message=FALSE}
+source(here::here("Homework3", "csvImport.r")) # sourcing script for importing data
+```
